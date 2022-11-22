@@ -1,0 +1,36 @@
+{
+	"name": "twitter-bets",
+	"version": "1.0.0",
+	"description": "Twitter-bets powered by Diva Protocol",
+	"main": "index.js",
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/divaprotocol/twitter-bets.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/divaprotocol/twitter-bets/issues"
+	},
+	"homepage": "https://github.com/divaprotocol/twitter-bets#readme",
+	"dependencies": {
+		"next": "^13.0.3",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"styled-components": "^5.3.6",
+		"tailwindcss": "^3.2.4"
+	},
+	"devDependencies": {
+		"@types/node": "18.11.9",
+		"@types/react": "18.0.25",
+		"autoprefixer": "^10.4.13",
+		"postcss": "^8.4.19",
+		"typescript": "4.8.4"
+	}
+}
