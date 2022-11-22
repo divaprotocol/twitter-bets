@@ -1,12 +1,9 @@
 import React from 'react'
-import Typography from '@mui/material/Typography'
 
 function HomePage() {
 	return (
-		<div>
-			<Typography variant="h1" fontFamily={'PPCirka'}>
-				Twitter Bets
-			</Typography>
+		<div className="m-10 text-3xl font-bold">
+			<button>Twitter bets</button>
 		</div>
 	)
 }

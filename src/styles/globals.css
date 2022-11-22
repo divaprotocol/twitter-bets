@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
 	font-family: 'PPCirka';
 	src: url('../assets/PPCirka/PPCirka-Light.otf');
