@@ -1,10 +1,12 @@
 import React from 'react'
+import Layout from '../components/Layout'
+import Home from '../components/home'
 
 function HomePage() {
 	return (
-		<div className="m-10 text-3xl font-bold">
-			<button>Twitter bets</button>
-		</div>
+		<Layout>
+			<Home />
+		</Layout>
 	)
 }
 
