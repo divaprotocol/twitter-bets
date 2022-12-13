@@ -22,8 +22,27 @@
 @font-face {
 	font-family: 'Gilroy';
 	src: url('../assets/Gilroy/Gilroy-UltraLight.ttf');
-	src: url('../assets/Gilroy/Gilroy-Light.ttf');
+	font-weight: 200;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
 	src: url('../assets/Gilroy/Gilroy-Regular.woff');
-	font-weight: 200 300 400 700;
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('../assets/Gilroy/Gilroy-Light.ttf');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('../assets/Gilroy/Gilroy-Bold.woff');
+	font-weight: 700;
 	font-style: normal;
 }

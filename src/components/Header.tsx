@@ -7,7 +7,7 @@ const Header = () => {
 			<Head>
 				<title>Twitter Bets | Diva Protocol</title>
 				<meta name="description" content="Twitter Bets" />
-				<link rel="icon" href="/public/favicon.svg" />
+				<link rel="icon" href="./favicon.svg" />
 			</Head>
 			<div className="pt-10 px-16 text-white flex justify-between items-center">
 				<div className=" text-4xl font-bold font-body">
