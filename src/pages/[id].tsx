@@ -3,15 +3,16 @@ import { useRouter } from 'next/router'
 import PoolOffer from '../components/poolOffer'
 import { useWhitelist } from '../hooks/useWhitelist'
 import axios from 'axios'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const PoolDetails = () => {
 	const router = useRouter()
 	const [poolData, setPoolData] = useState(null)
 	const [isPoolLoading, setIsPoolLoading] = useState(false)
-	const [isLong, setIsLong] = useState(true)
 	const dataSource = useWhitelist()
 	const [dataSourceName, setDataSourceName] = useState('')
-	const { id, type } = router.query
+	const { id } = router.query
 
 	useEffect(() => {
 		if (id) {
@@ -43,14 +44,8 @@ const PoolDetails = () => {
 		}
 	}, [dataSource.dataProviders, poolData?.dataProvider])
 
-	useEffect(() => {
-		if (type === 'long') {
-			setIsLong(true)
-		} else setIsLong(false)
-	}, [type])
-
 	return (
-		<div className="text-white mt-16">
+		<div className="text-white mt-16 pb-0">
 			<button
 				onClick={() => {
 					router.push('/')
@@ -70,13 +65,16 @@ const PoolDetails = () => {
 					You can now share this across the world to get your offer filled
 				</div>
 				{isPoolLoading || !poolData ? (
-					<div>Pool is Loading........</div>
+					<div className="mt-6">
+						<Skeleton
+							width={861.51}
+							height={500}
+							baseColor="#202020"
+							highlightColor="#444"
+						/>
+					</div>
 				) : (
-					<PoolOffer
-						id={id && id.toString()}
-						pool={{ ...poolData, dataSourceName: dataSourceName }}
-						isLong={isLong}
-					/>
+					<PoolOffer pool={{ ...poolData, dataSourceName: dataSourceName }} />
 				)}
 			</div>
 		</div>

@@ -17,9 +17,6 @@ const home = () => {
 		if (inputPoolId.length > 0) {
 			router.push({
 				pathname: `/${inputPoolId}`,
-				query: {
-					type: isLong ? 'long' : 'short',
-				},
 			})
 		} else {
 			setError('Please enter a pool hash')
@@ -62,13 +59,14 @@ const home = () => {
 						error ? 'border-red-400' : 'border-x-sky-50'
 					}  bg-black placeholder:text-center uppercase text-center focus:placeholder-transparent font-text font-bold focus:outline-none text-xs tracking-widest placeholder:tracking-widest text-[#8A8A8A]`}
 					type="text"
-					placeholder="Enter your pool hash here"
+					placeholder="ENTER YOUR OFFER HASH HERE"
 					value={inputPoolId}
 					onChange={(e) => setInputPoolId(e.target.value)}
 					ref={inputElRef}
 				/>
 			</div>
-			<div className="mt-2">
+			{/* commented for future use */}
+			{/* <div className="mt-2">
 				<div className="border-2 border-[#8A8A8A] flex gap-2 p-1 uppercase font-text text-xs">
 					<div
 						className={`${
@@ -89,7 +87,7 @@ const home = () => {
 						Short
 					</div>
 				</div>
-			</div>
+			</div> */}
 			<div className="mt-2 h-3">
 				{error && (
 					<div className="text-xs text-red-400 font-text font-bold">

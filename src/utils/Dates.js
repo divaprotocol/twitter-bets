@@ -10,9 +10,9 @@ function formatAMPM(date) {
 }
 
 export function getDateTime(dateData) {
-	var date = new Date(dateData * 1e3).toDateString().slice(0, 10)
+	var date = new Date(dateData * 1e3).toDateString().slice(4, 10)
 	var time = formatAMPM(new Date(dateData * 1e3))
-	return date + ' ' + time
+	return date + ' - ' + time
 }
 
 export function getExpiryMinutesFromNow(Timestamp) {

@@ -37,8 +37,9 @@ const PayoffChart = ({ pool, isLong }) => {
 	)
 }
 
-const PoolOffer = ({ pool, isLong }: { pool: any; isLong: boolean }) => {
+const PoolOffer = ({ pool }: { pool: any }) => {
 	const [maxYieldTaker, setMaxYieldTaker] = useState(0)
+	const isLong = pool.makerIsLong
 
 	const {
 		referenceAsset,
@@ -101,7 +102,7 @@ const PoolOffer = ({ pool, isLong }: { pool: any; isLong: boolean }) => {
 								<img src="./Tokens.svg" alt="tokens" />
 							</div>
 							<div className="text-4xl">{referenceAsset}</div>
-							<div className="text-xs text-[#8A8A8A] uppercase ml-10">{`AT ${
+							<div className="text-xs text-[#8A8A8A] uppercase ml-10 font-text">{`AT ${
 								getDateTime(expiryTime) + ' ' + userTimeZone()
 							}`}</div>
 						</div>
@@ -109,14 +110,16 @@ const PoolOffer = ({ pool, isLong }: { pool: any; isLong: boolean }) => {
 						<div className="relative group overflow-hidden w-fit mt-4">
 							<div className="bg-[#FFCB45] py-2 px-3 flex items-center justify-end text-black font-text text-xs animate-shine">
 								<div className="h-1 w-1 bg-[#EE4D37] rounded-full mr-2"></div>
-								<div className="font-bold mr-1">Offer available until</div>
-								<div>{getDateTime(offerExpiry) + ' ' + userTimeZone()}</div>
+								<div className="font-bold mr-1 ">Offer available until</div>
+								<div className="font-text">
+									{getDateTime(offerExpiry) + ' ' + userTimeZone()}
+								</div>
 							</div>
 							<div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 animate-shine" />
 						</div>
 
-						<div className="flex mt-4">
-							<div className="flex items-center mr-6">
+						<div className="flex mt-4 items-center">
+							<div className="flex items-center mr-4">
 								<div className="mr-2">
 									<img src="./USDT-Coin.svg" alt="coin" />
 								</div>
@@ -138,7 +141,9 @@ const PoolOffer = ({ pool, isLong }: { pool: any; isLong: boolean }) => {
 								</div>
 								<div className="font-text">
 									<div className="text-xl text-[#1AD3FF]"> Max yield</div>
-									<div className="font-medium text-2xl">{maxYield}x</div>
+									<div className="font-medium text-2xl">
+										{maxYield.toFixed(2)}x
+									</div>
 								</div>
 							</div>
 						</div>
@@ -277,7 +282,10 @@ const PoolOffer = ({ pool, isLong }: { pool: any; isLong: boolean }) => {
 					<div>Download</div>
 				</button>
 				<button
-					onClick={() => {}}
+					onClick={() => {
+						//
+						navigator.clipboard.writeText('https://divaviz.com/')
+					}}
 					className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text">
 					<div>
 						<img src="./copy-vector.svg" alt="copy" />
