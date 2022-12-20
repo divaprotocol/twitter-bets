@@ -159,7 +159,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 											<span style={{ color: '#3393E0' }}>
 												{maxYieldTaker.toFixed(2) + 'x'}
 											</span>
-										</strong>
+										</strong> 
 									) : (
 										<strong>
 											<span style={{ color: '#3393E0' }}>0.00x</span>
@@ -224,9 +224,10 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 						</div>
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
-							Note: {maxYieldTaker.toFixed(2) + 'x'} means putting in 100 USDT will yield {(maxYieldTaker * 100).toFixed(0)} USDT (net
+							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that putting in 100 USDT will yield {(maxYieldTaker * 100).toFixed(0)} USDT (net
 							gain {((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
 						</div>
+						{/** TODO replace USDT with actual collateral token symbol */}
 
 						{/* data provider */}
 						<div className="flex gap-2 items-center justify-center  text-xs font-text bg-[#FFFFFF] border-[0.4px] border-[#0D0D0D] w-fit h-[33px] mt-6 px-2">
