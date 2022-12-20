@@ -168,8 +168,8 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								</div>
 								<div>
 									if {referenceAsset} is{' '}
-									{floor < inflection && inflection < cap ? 'at or ' : ''} below{' '}
-									{floor} on {PoolExpiryTime}
+									{(floor < inflection && inflection < cap) ? 'at or ' : ''} above{' '}
+									{cap} on {PoolExpiryTime}
 								</div>
 							</div>
 
@@ -217,15 +217,15 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								</div>
 								<div>
 									if {referenceAsset} is{' '}
-									{floor < inflection && inflection < cap ? 'at or ' : ''} above{' '}
-									{cap} on {PoolExpiryTime}
+									{(floor < inflection && inflection < cap) || (isLong && floor < inflection && inflection == cap) ? 'at or ' : ''} below{' '}
+									{floor} on {PoolExpiryTime}
 								</div>
 							</div>
 						</div>
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
-							Note: 1,24x means putting in 100 USDT will yield 124 USDT (net
-							gain 24 USDT)
+							Note: {maxYieldTaker.toFixed(2) + 'x'} means putting in 100 USDT will yield {(maxYieldTaker * 100).toFixed(0)} USDT (net
+							gain {((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
 						</div>
 
 						{/* data provider */}
