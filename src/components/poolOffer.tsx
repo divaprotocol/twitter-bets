@@ -19,7 +19,7 @@ const PayoffChart = ({ pool, isLong }) => {
 						floor={Number(formatUnits(floor))}
 						cap={Number(formatUnits(cap))}
 						inflection={Number(formatUnits(inflection))}
-						gradient={Number(formatUnits(gradient))}
+						gradient={Number(formatUnits(gradient))} // TODO add decimals here (not relevant for floor, cap, inflection)
 						referenceAsset={referenceAsset}
 						hasError={false}
 						collateralToken={null}
@@ -39,7 +39,7 @@ const PayoffChart = ({ pool, isLong }) => {
 
 const PoolOffer = ({ pool }: { pool: any }) => {
 	const [maxYieldTaker, setMaxYieldTaker] = useState(0)
-	const isLong = pool.makerIsLong
+	const isLong = !pool.makerIsLong
 
 	const {
 		referenceAsset,
@@ -59,15 +59,17 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 		floor: Number(formatUnits(pool.floor)),
 		cap: Number(formatUnits(pool.cap)),
 		inflection: Number(formatUnits(pool.inflection)),
-		gradient: parseFloat(formatUnits(pool.gradient)),
+		gradient: parseFloat(formatUnits(pool.gradient)),  // TODO add decimals here (not relevant for floor, cap, inflection)
 	}
 
+	// TODO it collateral token doesn't need to have 18 decimals. Query the number of decimals and replace 18 in here
 	const maxYield =
 		(Number(formatUnits(takerCollateralAmount, 18)) +
 			Number(formatUnits(makerCollateralAmount, 18))) /
 		Number(formatUnits(takerCollateralAmount, 18))
 
 	useEffect(() => {
+		// TODO Use decimals correctly
 		setMaxYieldTaker(
 			(Number(formatUnits(takerCollateralAmount)) +
 				Number(formatUnits(makerCollateralAmount))) /
@@ -76,6 +78,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	}, [pool])
 
 	const OfferExpiryTime = `${getDateTime(offerExpiry) + ' ' + userTimeZone()}`
+	const PoolExpiryTime = `${getDateTime(pool.expiryTime) + ' ' + userTimeZone()}`
 
 	return (
 		<div className="mt-6">
@@ -128,10 +131,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										Maximum available
 									</div>
 									<div className="font-medium text-2xl">
-										{capacity ===
-										'115792089237316195423570985008687907853269984665640564039457584007913129639935'
-											? 'Unlimited'
-											: capacity}
+										{formatUnits(pool.takerCollateralAmount)}{/**TODO Use decimals here */}
 									</div>
 								</div>
 							</div>
@@ -156,20 +156,20 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								<div className="text-[#76FFC6]">
 									{isLong ? (
 										<strong>
-											<span style={{ color: '#3393E0' }}>0.00x</span>
-										</strong>
-									) : (
-										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{maxYieldTaker.toFixed(2) + 'x'}
 											</span>
+										</strong>
+									) : (
+										<strong>
+											<span style={{ color: '#3393E0' }}>0.00x</span>
 										</strong>
 									)}
 								</div>
 								<div>
 									if {referenceAsset} is{' '}
 									{floor < inflection && inflection < cap ? 'at or ' : ''} below{' '}
-									{floor} on {OfferExpiryTime}
+									{floor} on {PoolExpiryTime}
 								</div>
 							</div>
 
@@ -194,7 +194,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								</div>
 								<div>
 									{' '}
-									if BTC/USDT is at {inflection} on {OfferExpiryTime}
+									if BTC/USDT is at {inflection} on {PoolExpiryTime}
 								</div>
 							</div>
 
@@ -218,7 +218,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								<div>
 									if {referenceAsset} is{' '}
 									{floor < inflection && inflection < cap ? 'at or ' : ''} above{' '}
-									{cap} on {OfferExpiryTime}
+									{cap} on {PoolExpiryTime}
 								</div>
 							</div>
 						</div>
