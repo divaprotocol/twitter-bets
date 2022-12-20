@@ -154,37 +154,43 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./up-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#76FFC6]">
-									{isLong ? (
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{maxYieldTaker.toFixed(2) + 'x'}
 											</span>
 										</strong> 
+								</div>
+								{isLong ? (
+									/** Taker is long */
+									<div>
+										if {referenceAsset} is{' '}
+										{(inflection < cap) ? 'at or ' : ''} above{' '}
+										{cap} on {PoolExpiryTime}
+									</div>
 									) : (
-										<strong>
-											<span style={{ color: '#3393E0' }}>0.00x</span>
-										</strong>
-									)}
-								</div>
-								<div>
-									if {referenceAsset} is{' '}
-									{(floor < inflection && inflection < cap) ? 'at or ' : ''} above{' '}
-									{cap} on {PoolExpiryTime}
-								</div>
-							</div>
-
+									/** Taker is short */
+										<div>
+										if {referenceAsset} is{' '}
+										{(floor < inflection) ? 'at or ' : ''} below{' '}
+										{floor} on {PoolExpiryTime}
+									</div>
+									)
+								}
+							</div>													
 							<div className="border-[0.4px] border-[#8A8A8A] flex text-xs px-4 py-2 items-center gap-1 font-text">
 								<div className="mr-3">
 									<img src="./equal-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#89A5E3]">
 									{isLong ? (
+										/** Taker is long */
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{(gradient * maxYieldTaker).toFixed(2) + 'x'}
 											</span>
 										</strong>
 									) : (
+										/** Taker is short */
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{((1 - gradient) * maxYieldTaker).toFixed(2) + 'x'}
@@ -192,7 +198,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										</strong>
 									)}
 								</div>
-								<div>
+								<div>									
 									{' '}
 									if BTC/USDT is at {inflection} on {PoolExpiryTime}
 								</div>
@@ -203,28 +209,33 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./down-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#F47564]">
-									{isLong ? (
 										<strong>
 											<span style={{ color: '#3393E0' }}>0.00x</span>
 										</strong>
-									) : (
-										<strong>
-											<span style={{ color: '#3393E0' }}>
-												{maxYieldTaker.toFixed(2) + 'x'}
-											</span>
-										</strong>
-									)}{' '}
 								</div>
 								<div>
-									if {referenceAsset} is{' '}
-									{(floor < inflection && inflection < cap) || (isLong && floor < inflection && inflection == cap) ? 'at or ' : ''} below{' '}
-									{floor} on {PoolExpiryTime}
+									{isLong ? (
+										/** Taker is long */
+										<div>
+											if {referenceAsset} is{' '}
+											{(floor < inflection) ? 'at or ' : ''} below{' '}
+											{floor} on {PoolExpiryTime}
+										</div>
+										) : (
+											/** Taker is short */
+										<div>
+											if {referenceAsset} is{' '}
+											{(inflection < cap) ? 'at or ' : ''} above{' '}
+											{cap} on {PoolExpiryTime}
+										</div>																					
+										)
+									}
 								</div>
 							</div>
 						</div>
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
-							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that putting in 100 USDT will yield {(maxYieldTaker * 100).toFixed(0)} USDT (net
+							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that putting in 100 USDT will return a maximum of {(maxYieldTaker * 100).toFixed(0)} USDT (net
 							gain {((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
 						</div>
 						{/** TODO replace USDT with actual collateral token symbol */}
