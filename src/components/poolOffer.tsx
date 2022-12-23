@@ -19,7 +19,7 @@ const PayoffChart = ({ pool, isLong }) => {
 						floor={Number(formatUnits(floor))}
 						cap={Number(formatUnits(cap))}
 						inflection={Number(formatUnits(inflection))}
-						gradient={Number(formatUnits(gradient))}
+						gradient={Number(formatUnits(gradient))} // TODO add decimals here (not relevant for floor, cap, inflection)
 						referenceAsset={referenceAsset}
 						hasError={false}
 						collateralToken={null}
@@ -39,7 +39,7 @@ const PayoffChart = ({ pool, isLong }) => {
 
 const PoolOffer = ({ pool }: { pool: any }) => {
 	const [maxYieldTaker, setMaxYieldTaker] = useState(0)
-	const isLong = pool.makerIsLong
+	const isLong = !pool.makerIsLong
 
 	const {
 		referenceAsset,
@@ -59,15 +59,17 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 		floor: Number(formatUnits(pool.floor)),
 		cap: Number(formatUnits(pool.cap)),
 		inflection: Number(formatUnits(pool.inflection)),
-		gradient: parseFloat(formatUnits(pool.gradient)),
+		gradient: parseFloat(formatUnits(pool.gradient)),  // TODO add decimals here (not relevant for floor, cap, inflection)
 	}
 
+	// TODO it collateral token doesn't need to have 18 decimals. Query the number of decimals and replace 18 in here
 	const maxYield =
 		(Number(formatUnits(takerCollateralAmount, 18)) +
 			Number(formatUnits(makerCollateralAmount, 18))) /
 		Number(formatUnits(takerCollateralAmount, 18))
 
 	useEffect(() => {
+		// TODO Use decimals correctly
 		setMaxYieldTaker(
 			(Number(formatUnits(takerCollateralAmount)) +
 				Number(formatUnits(makerCollateralAmount))) /
@@ -76,6 +78,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	}, [pool])
 
 	const OfferExpiryTime = `${getDateTime(offerExpiry) + ' ' + userTimeZone()}`
+	const PoolExpiryTime = `${getDateTime(pool.expiryTime) + ' ' + userTimeZone()}`
 
 	return (
 		<div className="mt-6">
@@ -128,10 +131,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										Maximum available
 									</div>
 									<div className="font-medium text-2xl">
-										{capacity ===
-										'115792089237316195423570985008687907853269984665640564039457584007913129639935'
-											? 'Unlimited'
-											: capacity}
+										{formatUnits(pool.takerCollateralAmount)}{/**TODO Use decimals here */}
 									</div>
 								</div>
 							</div>
@@ -154,37 +154,43 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./up-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#76FFC6]">
-									{isLong ? (
-										<strong>
-											<span style={{ color: '#3393E0' }}>0.00x</span>
-										</strong>
-									) : (
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{maxYieldTaker.toFixed(2) + 'x'}
 											</span>
-										</strong>
-									)}
+										</strong> 
 								</div>
-								<div>
-									if {referenceAsset} is{' '}
-									{floor < inflection && inflection < cap ? 'at or ' : ''} below{' '}
-									{floor} on {OfferExpiryTime}
-								</div>
-							</div>
-
+								{isLong ? (
+									/** Taker is long */
+									<div>
+										if {referenceAsset} is{' '}
+										{(inflection < cap) ? 'at or ' : ''} above{' '}
+										{cap} on {PoolExpiryTime}
+									</div>
+									) : (
+									/** Taker is short */
+										<div>
+										if {referenceAsset} is{' '}
+										{(floor < inflection) ? 'at or ' : ''} below{' '}
+										{floor} on {PoolExpiryTime}
+									</div>
+									)
+								}
+							</div>													
 							<div className="border-[0.4px] border-[#8A8A8A] flex text-xs px-4 py-2 items-center gap-1 font-text">
 								<div className="mr-3">
 									<img src="./equal-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#89A5E3]">
 									{isLong ? (
+										/** Taker is long */
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{(gradient * maxYieldTaker).toFixed(2) + 'x'}
 											</span>
 										</strong>
 									) : (
+										/** Taker is short */
 										<strong>
 											<span style={{ color: '#3393E0' }}>
 												{((1 - gradient) * maxYieldTaker).toFixed(2) + 'x'}
@@ -192,9 +198,9 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										</strong>
 									)}
 								</div>
-								<div>
+								<div>									
 									{' '}
-									if BTC/USDT is at {inflection} on {OfferExpiryTime}
+									if BTC/USDT is at {inflection} on {PoolExpiryTime}
 								</div>
 							</div>
 
@@ -203,30 +209,36 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./down-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#F47564]">
-									{isLong ? (
 										<strong>
 											<span style={{ color: '#3393E0' }}>0.00x</span>
 										</strong>
-									) : (
-										<strong>
-											<span style={{ color: '#3393E0' }}>
-												{maxYieldTaker.toFixed(2) + 'x'}
-											</span>
-										</strong>
-									)}{' '}
 								</div>
 								<div>
-									if {referenceAsset} is{' '}
-									{floor < inflection && inflection < cap ? 'at or ' : ''} above{' '}
-									{cap} on {OfferExpiryTime}
+									{isLong ? (
+										/** Taker is long */
+										<div>
+											if {referenceAsset} is{' '}
+											{(floor < inflection) ? 'at or ' : ''} below{' '}
+											{floor} on {PoolExpiryTime}
+										</div>
+										) : (
+											/** Taker is short */
+										<div>
+											if {referenceAsset} is{' '}
+											{(inflection < cap) ? 'at or ' : ''} above{' '}
+											{cap} on {PoolExpiryTime}
+										</div>																					
+										)
+									}
 								</div>
 							</div>
 						</div>
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
-							Note: 1,24x means putting in 100 USDT will yield 124 USDT (net
-							gain 24 USDT)
+							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that putting in 100 USDT will return a maximum of {(maxYieldTaker * 100).toFixed(0)} USDT (net
+							gain {((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
 						</div>
+						{/** TODO replace USDT with actual collateral token symbol */}
 
 						{/* data provider */}
 						<div className="flex gap-2 items-center justify-center  text-xs font-text bg-[#FFFFFF] border-[0.4px] border-[#0D0D0D] w-fit h-[33px] mt-6 px-2">
