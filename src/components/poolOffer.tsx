@@ -1,12 +1,22 @@
 import { getDateTime, userTimeZone } from '../utils/Dates'
 import React, { useEffect, useState } from 'react'
 import * as htmlToImage from 'html-to-image'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits, id } from 'ethers/lib/utils'
 import { TwitterShareButton } from 'react-share'
 import { PayoffProfile } from './payOffProfile'
+import ERC20 from '../abi/ERC20ABI.json'
+import Web3 from 'web3'
 
-const PayoffChart = ({ pool, isLong }) => {
-	const { floor, cap, inflection, gradient, referenceAsset, expiryTime } = pool
+const PayoffChart = ({ pool, isLong, decimal }) => {
+	const {
+		floor,
+		cap,
+		inflection,
+		gradient,
+		referenceAsset,
+		expiryTime,
+		takerCollateralAmount,
+	} = pool
 
 	return (
 		<div className="text-center font-text">
@@ -19,11 +29,13 @@ const PayoffChart = ({ pool, isLong }) => {
 						floor={Number(formatUnits(floor))}
 						cap={Number(formatUnits(cap))}
 						inflection={Number(formatUnits(inflection))}
-						gradient={Number(formatUnits(gradient))} // TODO add decimals here (not relevant for floor, cap, inflection)
+						gradient={Number(formatUnits(gradient, decimal))} // TODO add decimals here (not relevant for floor, cap, inflection)
 						referenceAsset={referenceAsset}
 						hasError={false}
 						collateralToken={null}
 						longDirection={isLong}
+						showMultiple={true}
+						maxYieldTaker={Number(formatUnits(takerCollateralAmount, decimal))}
 					/>
 				</div>
 				<div className="text-[#FF8744] text-base">
@@ -39,13 +51,16 @@ const PayoffChart = ({ pool, isLong }) => {
 
 const PoolOffer = ({ pool }: { pool: any }) => {
 	const [maxYieldTaker, setMaxYieldTaker] = useState(0)
+	const [decimal, setDecimal] = useState(18)
+	const [isCopyButtonClick, setIsCopyButtonClick] = useState(false)
 	const isLong = !pool.makerIsLong
+
+	const web3 = new Web3(Web3.givenProvider)
 
 	const {
 		referenceAsset,
 		expiryTime,
 		offerExpiry,
-		capacity,
 		gradient,
 		takerCollateralAmount,
 		makerCollateralAmount,
@@ -59,26 +74,45 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 		floor: Number(formatUnits(pool.floor)),
 		cap: Number(formatUnits(pool.cap)),
 		inflection: Number(formatUnits(pool.inflection)),
-		gradient: parseFloat(formatUnits(pool.gradient)),  // TODO add decimals here (not relevant for floor, cap, inflection)
+		gradient: parseFloat(formatUnits(pool.gradient, decimal)), // TODO add decimals here (not relevant for floor, cap, inflection),
+		referenceAsset: pool.referenceAsset,
+		expiryTime: pool.expiryTime,
+		offerExpiry: pool.offerExpiry,
 	}
 
 	// TODO it collateral token doesn't need to have 18 decimals. Query the number of decimals and replace 18 in here
 	const maxYield =
-		(Number(formatUnits(takerCollateralAmount, 18)) +
-			Number(formatUnits(makerCollateralAmount, 18))) /
-		Number(formatUnits(takerCollateralAmount, 18))
+		(Number(formatUnits(takerCollateralAmount, decimal)) +
+			Number(formatUnits(makerCollateralAmount, decimal))) /
+		Number(formatUnits(takerCollateralAmount, decimal))
 
 	useEffect(() => {
 		// TODO Use decimals correctly
 		setMaxYieldTaker(
-			(Number(formatUnits(takerCollateralAmount)) +
-				Number(formatUnits(makerCollateralAmount))) /
-				Number(formatUnits(takerCollateralAmount))
+			(Number(formatUnits(takerCollateralAmount, decimal)) +
+				Number(formatUnits(makerCollateralAmount, decimal))) /
+				Number(formatUnits(takerCollateralAmount, decimal))
 		)
 	}, [pool])
 
 	const OfferExpiryTime = `${getDateTime(offerExpiry) + ' ' + userTimeZone()}`
-	const PoolExpiryTime = `${getDateTime(pool.expiryTime) + ' ' + userTimeZone()}`
+	const PoolExpiryTime = `${
+		getDateTime(pool.expiryTime) + ' ' + userTimeZone()
+	}`
+
+	useEffect(() => {
+		const token = new web3.eth.Contract(ERC20 as any, pool.collateralToken)
+
+		token.methods
+			.decimals()
+			.call()
+			.then((decimals: number) => {
+				setDecimal(decimals)
+			})
+			.catch((err) => {
+				console.error(err)
+			})
+	}, [pool.collateralToken])
 
 	return (
 		<div className="mt-6">
@@ -131,7 +165,8 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										Maximum available
 									</div>
 									<div className="font-medium text-2xl">
-										{formatUnits(pool.takerCollateralAmount)}{/**TODO Use decimals here */}
+										{formatUnits(pool.takerCollateralAmount, decimal)}
+										{/**TODO Use decimals here */}
 									</div>
 								</div>
 							</div>
@@ -154,29 +189,26 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./up-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#76FFC6]">
-										<strong>
-											<span style={{ color: '#3393E0' }}>
-												{maxYieldTaker.toFixed(2) + 'x'}
-											</span>
-										</strong> 
+									<strong>
+										<span style={{ color: '#3393E0' }}>
+											{maxYieldTaker.toFixed(2) + 'x'}
+										</span>
+									</strong>
 								</div>
 								{isLong ? (
 									/** Taker is long */
 									<div>
-										if {referenceAsset} is{' '}
-										{(inflection < cap) ? 'at or ' : ''} above{' '}
-										{cap} on {PoolExpiryTime}
+										if {referenceAsset} is {inflection < cap ? 'at or ' : ''}{' '}
+										above {cap} on {PoolExpiryTime}
 									</div>
-									) : (
+								) : (
 									/** Taker is short */
-										<div>
-										if {referenceAsset} is{' '}
-										{(floor < inflection) ? 'at or ' : ''} below{' '}
-										{floor} on {PoolExpiryTime}
+									<div>
+										if {referenceAsset} is {floor < inflection ? 'at or ' : ''}{' '}
+										below {floor} on {PoolExpiryTime}
 									</div>
-									)
-								}
-							</div>													
+								)}
+							</div>
 							<div className="border-[0.4px] border-[#8A8A8A] flex text-xs px-4 py-2 items-center gap-1 font-text">
 								<div className="mr-3">
 									<img src="./equal-arrow.svg" alt="up" />
@@ -198,7 +230,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										</strong>
 									)}
 								</div>
-								<div>									
+								<div>
 									{' '}
 									if BTC/USDT is at {inflection} on {PoolExpiryTime}
 								</div>
@@ -209,34 +241,34 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 									<img src="./down-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#F47564]">
-										<strong>
-											<span style={{ color: '#3393E0' }}>0.00x</span>
-										</strong>
+									<strong>
+										<span style={{ color: '#3393E0' }}>0.00x</span>
+									</strong>
 								</div>
 								<div>
 									{isLong ? (
 										/** Taker is long */
 										<div>
 											if {referenceAsset} is{' '}
-											{(floor < inflection) ? 'at or ' : ''} below{' '}
-											{floor} on {PoolExpiryTime}
+											{floor < inflection ? 'at or ' : ''} below {floor} on{' '}
+											{PoolExpiryTime}
 										</div>
-										) : (
-											/** Taker is short */
+									) : (
+										/** Taker is short */
 										<div>
-											if {referenceAsset} is{' '}
-											{(inflection < cap) ? 'at or ' : ''} above{' '}
-											{cap} on {PoolExpiryTime}
-										</div>																					
-										)
-									}
+											if {referenceAsset} is {inflection < cap ? 'at or ' : ''}{' '}
+											above {cap} on {PoolExpiryTime}
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
-							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that putting in 100 USDT will return a maximum of {(maxYieldTaker * 100).toFixed(0)} USDT (net
-							gain {((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
+							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that
+							putting in 100 USDT will return a maximum of{' '}
+							{(maxYieldTaker * 100).toFixed(0)} USDT (net gain{' '}
+							{((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
 						</div>
 						{/** TODO replace USDT with actual collateral token symbol */}
 
@@ -250,7 +282,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 					{/* right side */}
 					<div className="flex flex-col w-full pt-6">
 						{/* <div className="text-base opacity-70 text-right">{`#${id}`}</div> */}
-						<PayoffChart pool={pool} isLong={isLong} />
+						<PayoffChart pool={pool} isLong={isLong} decimal={decimal} />
 						<div className="mt-8">
 							<div className="font-text flex items-center justify-end gap-3">
 								<div>
@@ -296,18 +328,30 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 				<button
 					onClick={() => {
 						//
-						navigator.clipboard.writeText('https://divaviz.com/')
+						setIsCopyButtonClick(true)
+						navigator.clipboard.writeText(
+							`https://divaviz.com/${pool.offerHash}`
+						)
+						setTimeout(() => {
+							setIsCopyButtonClick(false)
+						}, 2000)
 					}}
-					className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text">
-					<div>
-						<img src="./copy-vector.svg" alt="copy" />
-					</div>
-					<div>Copy Link</div>
+					className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text min-w-[118px]">
+					{isCopyButtonClick ? (
+						<div>Copied</div>
+					) : (
+						<>
+							<div>
+								<img src="./copy-vector.svg" alt="copy" />
+							</div>
+							<div>Copy Link</div>
+						</>
+					)}
 				</button>
 
 				<TwitterShareButton
-					url={'https://app.diva.finance/'}
-					title={'Sharing the Diva app'}>
+					url={`https://divaviz.com/${pool.offerHash}`}
+					title={'Sharing the Twitter bets'}>
 					<div className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text">
 						<div>
 							<img src="./twitter-logo.svg" alt="twitter" />

@@ -25,7 +25,7 @@ const PoolDetails = () => {
 					setIsPoolLoading(false)
 				})
 				.catch((err) => {
-					console.log(err)
+					console.error(err)
 					setIsPoolLoading(false)
 				})
 		}

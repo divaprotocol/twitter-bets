@@ -1,5 +1,6 @@
-import Globe_Background from './assets/Images/globe-vector.svg';
-import Wave_Background_Pattern from './assets/Images/bg-pattern.svg'
 
 
-export { Globe_Background, Wave_Background_Pattern }
+const divaAddress = '0x659f8bF63Dce2548eB4D9b4BfF6883dddFde4848'
+
+
+export { divaAddress }

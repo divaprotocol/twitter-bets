@@ -12,6 +12,8 @@ export function PayoffProfile(props) {
 		longDirection,
 		collateralToken,
 		referenceAsset,
+		maxYieldTaker,
+		showMultiple,
 	} = props
 
 	const padding = cap * 0.1
@@ -86,6 +88,7 @@ export function PayoffProfile(props) {
 	const domainMax = d3.max(longdata, function (d) {
 		return d.x
 	})
+	const f = d3.format('.2f')
 
 	useLayoutEffect(() => {
 		const callback = () => {
@@ -162,6 +165,9 @@ export function PayoffProfile(props) {
 					.tickSize(width + 2)
 					.tickValues(tickValues)
 					.ticks(4)
+					.tickFormat(function (d) {
+						return showMultiple ? f(d * maxYieldTaker) + ' x' : f(d)
+					})
 			)
 			.call((g) => g.select('.domain').remove())
 			.call((g) =>
@@ -233,6 +239,36 @@ export function PayoffProfile(props) {
 			})
 			.style('stroke-width', '3px')
 			.attr('class', 'line')
+
+		svg
+			.append('rect')
+			.attr('x', width - 25)
+			.attr('y', height + 20)
+			.attr('width', 25)
+			.attr('height', 3)
+			.style('fill', '#90CAF9')
+			.style('opacity', function () {
+				if (longDirection == true) {
+					return 0
+				} else {
+					return 1
+				}
+			})
+
+		svg
+			.append('rect')
+			.attr('x', width - 80)
+			.attr('y', height + 20)
+			.attr('width', 25)
+			.attr('height', 3)
+			.style('fill', '#1976D2')
+			.style('opacity', function () {
+				if (longDirection == true || longDirection == undefined) {
+					return 1
+				} else {
+					return 0
+				}
+			})
 	}
 	useEffect(() => {
 		draw()
