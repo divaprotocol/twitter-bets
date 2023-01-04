@@ -82,16 +82,16 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 
 	// TODO it collateral token doesn't need to have 18 decimals. Query the number of decimals and replace 18 in here
 	const maxYield =
-		(Number(formatUnits(takerCollateralAmount, decimal)) +
-			Number(formatUnits(makerCollateralAmount, decimal))) /
-		Number(formatUnits(takerCollateralAmount, decimal))
+		(Number(formatUnits(pool.takerCollateralAmount, decimal)) +
+			Number(formatUnits(pool.makerCollateralAmount, decimal))) /
+		Number(formatUnits(pool.takerCollateralAmount, decimal))
 
 	useEffect(() => {
 		// TODO Use decimals correctly
 		setMaxYieldTaker(
-			(Number(formatUnits(takerCollateralAmount, decimal)) +
-				Number(formatUnits(makerCollateralAmount, decimal))) /
-				Number(formatUnits(takerCollateralAmount, decimal))
+			(Number(formatUnits(pool.takerCollateralAmount, decimal)) +
+				Number(formatUnits(pool.makerCollateralAmount, decimal))) /
+				Number(formatUnits(pool.takerCollateralAmount, decimal))
 		)
 	}, [pool])
 
@@ -115,7 +115,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	}, [pool.collateralToken])
 
 	return (
-		<div className="mt-6">
+		<div className="mt-6 mb-10">
 			<div
 				className="border-8 border-[#D9D9D9] w-[1000px] min-h-[580px]  bg-[#000000] relative pointer-events-none px-10"
 				id="my-node">
@@ -134,12 +134,14 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 							</div>
 						</div>
 
-						<div className="pt-4 flex items-center font-text">
-							<div className="mr-2">
-								<img src="./Tokens.svg" alt="tokens" />
+						<div className="pt-4 font-text">
+							<div className="flex items-center">
+								<div className="mr-2">
+									<img src="./Tokens.svg" alt="tokens" />
+								</div>
+								<div className="text-4xl">{referenceAsset}</div>
 							</div>
-							<div className="text-4xl">{referenceAsset}</div>
-							<div className="text-xs text-[#8A8A8A] uppercase ml-10 font-text">{`AT ${
+							<div className="text-xs text-[#8A8A8A] uppercase mt-2 font-text">{`AT ${
 								getDateTime(expiryTime) + ' ' + userTimeZone()
 							}`}</div>
 						</div>
