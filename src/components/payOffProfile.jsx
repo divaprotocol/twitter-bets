@@ -16,6 +16,7 @@ export function PayoffProfile(props) {
 		showMultiple,
 	} = props
 
+	console.log(props)
 	const padding = cap * 0.1
 	const start = Math.max(floor - padding, 0)
 

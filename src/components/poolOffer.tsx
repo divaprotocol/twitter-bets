@@ -7,7 +7,13 @@ import { PayoffProfile } from './payOffProfile'
 import ERC20 from '../abi/ERC20ABI.json'
 import Web3 from 'web3'
 
-const PayoffChart = ({ pool, isLong, decimal }) => {
+const PayoffChart = ({
+	pool,
+	isLong,
+	decimal,
+	collateralTokenSymbol,
+	maxYieldTaker,
+}) => {
 	const {
 		floor,
 		cap,
@@ -17,6 +23,8 @@ const PayoffChart = ({ pool, isLong, decimal }) => {
 		expiryTime,
 		takerCollateralAmount,
 	} = pool
+
+	console.log(takerCollateralAmount)
 
 	return (
 		<div className="text-center font-text">
@@ -30,12 +38,13 @@ const PayoffChart = ({ pool, isLong, decimal }) => {
 						cap={Number(formatUnits(cap))}
 						inflection={Number(formatUnits(inflection))}
 						gradient={Number(formatUnits(gradient, decimal))} // TODO add decimals here (not relevant for floor, cap, inflection)
-						referenceAsset={referenceAsset}
 						hasError={false}
-						collateralToken={null}
+						referenceAsset={referenceAsset}
+						collateralToken={collateralTokenSymbol}
 						longDirection={isLong}
 						showMultiple={true}
-						maxYieldTaker={Number(formatUnits(takerCollateralAmount, decimal))}
+						maxYieldTaker={maxYieldTaker}
+						offerDirection={isLong ? 'Long' : 'Short'}
 					/>
 				</div>
 				<div className="text-[#FF8744] text-base">
@@ -104,8 +113,6 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	useEffect(() => {
 		const token = new web3.eth.Contract(ERC20 as any, pool.collateralToken)
 
-		console.log(token.methods.name().call())
-
 		token.methods
 			.symbol()
 			.call()
@@ -123,8 +130,6 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 				console.error(err)
 			})
 	}, [pool.collateralToken])
-
-	console.log(collateralTokenSymbol)
 
 	return (
 		<div className="mt-6 mb-10">
@@ -151,11 +156,13 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								<div className="mr-2">
 									<img src="./Tokens.svg" alt="tokens" />
 								</div>
-								<div className="text-4xl">{referenceAsset}</div>
+								<div className="">
+									<div className="text-3xl">{referenceAsset}</div>
+									<div className="text-xs text-[#8A8A8A] uppercase mt-0 font-text">{`AT ${
+										getDateTime(expiryTime) + ' ' + userTimeZone()
+									}`}</div>
+								</div>
 							</div>
-							<div className="text-xs text-[#8A8A8A] uppercase mt-2 font-text">{`AT ${
-								getDateTime(expiryTime) + ' ' + userTimeZone()
-							}`}</div>
 						</div>
 
 						<div className="relative group overflow-hidden w-fit mt-4">
@@ -297,7 +304,13 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 					{/* right side */}
 					<div className="flex flex-col w-full pt-6">
 						{/* <div className="text-base opacity-70 text-right">{`#${id}`}</div> */}
-						<PayoffChart pool={pool} isLong={isLong} decimal={decimal} />
+						<PayoffChart
+							pool={pool}
+							isLong={isLong}
+							decimal={decimal}
+							collateralTokenSymbol={collateralTokenSymbol}
+							maxYieldTaker={maxYieldTaker}
+						/>
 						<div className="mt-8">
 							<div className="font-text flex items-center justify-end gap-3">
 								<div>

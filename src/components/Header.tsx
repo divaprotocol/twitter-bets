@@ -5,7 +5,7 @@ const Header = () => {
 	return (
 		<>
 			<Head>
-				<title>DIVA Viz | Diva Protocol</title>
+				<title>DIVA ViZ | Diva Protocol</title>
 				<meta name="description" content="DIVA Viz" />
 				<link rel="icon" href="./favicon.svg" />
 			</Head>
@@ -16,7 +16,7 @@ const Header = () => {
 					</div>
 				</div>
 				<div className="text-base cursor-pointer opacity-70">
-					<a href="#">FAQ</a>
+					<a href="https://docs.divaprotocol.io/">FAQ</a>
 				</div>
 			</div>
 		</>
