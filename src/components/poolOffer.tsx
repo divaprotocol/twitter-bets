@@ -24,8 +24,6 @@ const PayoffChart = ({
 		takerCollateralAmount,
 	} = pool
 
-	console.log(takerCollateralAmount)
-
 	return (
 		<div className="text-center font-text">
 			<div className="text-[#3BFFAD] font-text text-xl text-left">
