@@ -52,6 +52,7 @@ const PayoffChart = ({ pool, isLong, decimal }) => {
 const PoolOffer = ({ pool }: { pool: any }) => {
 	const [maxYieldTaker, setMaxYieldTaker] = useState(0)
 	const [decimal, setDecimal] = useState(18)
+	const [collateralTokenSymbol, SetCollateralTokenSymbol] = useState('')
 	const [isCopyButtonClick, setIsCopyButtonClick] = useState(false)
 	const isLong = !pool.makerIsLong
 
@@ -103,6 +104,15 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	useEffect(() => {
 		const token = new web3.eth.Contract(ERC20 as any, pool.collateralToken)
 
+		console.log(token.methods.name().call())
+
+		token.methods
+			.symbol()
+			.call()
+			.then((symbol) => {
+				SetCollateralTokenSymbol(symbol)
+			})
+
 		token.methods
 			.decimals()
 			.call()
@@ -113,6 +123,8 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 				console.error(err)
 			})
 	}, [pool.collateralToken])
+
+	console.log(collateralTokenSymbol)
 
 	return (
 		<div className="mt-6 mb-10">
@@ -268,9 +280,10 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 
 						<div className="text-[10px] text-[#8A8A8A] font-text mt-1">
 							Note: A max yield of {maxYieldTaker.toFixed(2) + 'x'} means that
-							putting in 100 USDT will return a maximum of{' '}
-							{(maxYieldTaker * 100).toFixed(0)} USDT (net gain{' '}
-							{((maxYieldTaker - 1) * 100).toFixed(0)} USDT)
+							putting in 100 {collateralTokenSymbol} will return a maximum of{' '}
+							{(maxYieldTaker * 100).toFixed(0)} {collateralTokenSymbol} (net
+							gain {((maxYieldTaker - 1) * 100).toFixed(0)}{' '}
+							{collateralTokenSymbol})
 						</div>
 						{/** TODO replace USDT with actual collateral token symbol */}
 
