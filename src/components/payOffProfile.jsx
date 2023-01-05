@@ -16,7 +16,6 @@ export function PayoffProfile(props) {
 		showMultiple,
 	} = props
 
-	console.log(props)
 	const padding = cap * 0.1
 	const start = Math.max(floor - padding, 0)
 
@@ -188,7 +187,7 @@ export function PayoffProfile(props) {
 						}
 						d3.select(this).style('fill', color[i])
 					})
-					.attr('x', -20)
+					.attr('x', -40)
 					.attr('dy', 4)
 			)
 			.attr('font-size', 12)

@@ -142,9 +142,8 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 						</div>
 						<div className="pt-6  text-white flex justify-between items-center">
 							<div className=" text-4xl font-bold font-body">
-								<div>Twitter Bets</div>
 								<div>
-									<img src="./title-underline.svg" alt="design" />
+									<img src="./DIVA-Viz-logo.svg" alt="logo DIVAViZ" />
 								</div>
 							</div>
 						</div>
@@ -377,7 +376,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 
 				<TwitterShareButton
 					url={`https://divaviz.com/${pool.offerHash}`}
-					title={'Sharing the Twitter bets'}>
+					title={'Sharing the DIVA ViZ'}>
 					<div className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text">
 						<div>
 							<img src="./twitter-logo.svg" alt="twitter" />
