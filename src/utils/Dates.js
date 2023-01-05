@@ -27,6 +27,12 @@ export const isExpired = (Timestamp) => {
 }
 
 export const userTimeZone = () => {
-	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+	const timeZone = new Date()
+		.toString()
+		.match(/\(([A-Za-z\s].*)\)/)[1]
+		.split(' ')
+		.map((word) => word.split('')[0])
+		.join('')
+
 	return timeZone
 }
