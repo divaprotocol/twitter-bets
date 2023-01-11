@@ -39,7 +39,7 @@ const PoolDetails = () => {
 			if (dataName?.name != null) {
 				setDataSourceName(dataName?.name)
 			} else {
-				setDataSourceName('Unknown')
+				setDataSourceName(poolData?.dataProvider)
 			}
 		}
 	}, [dataSource.dataProviders, poolData?.dataProvider])

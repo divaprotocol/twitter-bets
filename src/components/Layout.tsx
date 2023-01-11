@@ -9,8 +9,8 @@ const Layout = ({ children }) => {
 			</div>
 			<Header />
 			{children}
-			<div className="absolute right-0 bottom-0 pointer-events-none">
-				<img src={'./globe-vector.svg'} alt="globe-vector" />
+			<div className="absolute -right-56 -bottom-1/2 pointer-events-none">
+				<img src={'./globe.svg'} alt="globe-vector" />
 			</div>
 		</div>
 	)
