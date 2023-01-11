@@ -179,10 +179,12 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 						<div className="flex mt-6 items-center">
 							<div className="flex items-center mr-4">
 								<div className="mr-2">
-									<img
-										src={getAssetImage(collateralTokenSymbol, 'green')}
-										alt="coin"
-									/>
+									{collateralTokenSymbol && (
+										<img
+											src={getAssetImage(collateralTokenSymbol, 'green')}
+											alt="coin"
+										/>
+									)}
 								</div>
 								<div className="font-text">
 									<div className="text-xl text-[#3BFFAD]">
