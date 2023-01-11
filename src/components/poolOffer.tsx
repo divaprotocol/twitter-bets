@@ -183,6 +183,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										<img
 											src={getAssetImage(collateralTokenSymbol, 'green')}
 											alt="coin"
+											width={58}
 										/>
 									)}
 								</div>
@@ -362,7 +363,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 							.toJpeg(document.getElementById('my-node'), { quality: 0.95 })
 							.then(function (dataUrl) {
 								var link = document.createElement('a')
-								link.download = `${123}-pool.jpeg`
+								link.download = `${pool.offerHash}-offer.jpeg`
 								link.href = dataUrl
 								link.click()
 							})

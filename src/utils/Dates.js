@@ -12,7 +12,7 @@ function formatAMPM(date) {
 export function getDateTime(dateData) {
 	var date = `${new Date(dateData * 1e3)
 		.toDateString()
-		.slice(4, 10)} ${new Date(dateData * 1e3).toDateString().slice(13, 15)}`
+		.slice(4, 10)} '${new Date(dateData * 1e3).toDateString().slice(13, 15)}`
 	var time = formatAMPM(new Date(dateData * 1e3))
 	return date + ' - ' + time
 }
