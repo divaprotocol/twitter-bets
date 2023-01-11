@@ -1,11 +1,12 @@
 import { getDateTime, userTimeZone } from '../utils/Dates'
 import React, { useEffect, useState } from 'react'
 import * as htmlToImage from 'html-to-image'
-import { formatUnits, id } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils'
 import { TwitterShareButton } from 'react-share'
 import { PayoffProfile } from './payOffProfile'
 import ERC20 from '../abi/ERC20ABI.json'
 import Web3 from 'web3'
+import { getUnderlyingTokenImage } from '../utils/token'
 
 const PayoffChart = ({
 	pool,
@@ -64,6 +65,8 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	const isLong = !pool.makerIsLong
 
 	const web3 = new Web3(Web3.givenProvider)
+
+	const referenceAssetTokenIcons = getUnderlyingTokenImage(pool.referenceAsset)
 
 	const {
 		referenceAsset,
@@ -130,28 +133,28 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 	}, [pool.collateralToken])
 
 	return (
-		<div className="mt-6 mb-10">
+		<div className="mt-6 mb-10 z-10">
 			<div
-				className="border-8 border-[#D9D9D9] w-[1000px] min-h-[580px]  bg-[#000000] relative pointer-events-none px-10"
+				className="border-8 border-[#D9D9D9] w-[1000px] min-h-[580px]  bg-[#000000] relative pointer-events-none px-10 opacity-100"
 				id="my-node">
 				<div className="flex gap-6">
 					{/* Left side */}
-					<div>
+					<div className="mt-4">
 						<div className="absolute top-0 left-0 pointer-events-none">
 							<img src={'./bg-pattern.svg'} alt="pattern-wave" />
 						</div>
-						<div className="pt-6  text-white flex justify-between items-center">
-							<div className=" text-4xl font-bold font-body">
-								<div>
-									<img src="./DIVA-Viz-logo.svg" alt="logo DIVAViZ" />
-								</div>
-							</div>
-						</div>
 
-						<div className="pt-4 font-text">
+						<div className="pt-4 font-text ">
 							<div className="flex items-center">
-								<div className="mr-2">
-									<img src="./Tokens.svg" alt="tokens" />
+								<div>
+									<div className="mr-2 w-[75px] h-10 relative">
+										<div className="absolute top-0 w-[43px]">
+											<img src={referenceAssetTokenIcons[0]} alt="tokens" />
+										</div>
+										<div className="absolute top-0 right-0 w-[43px]">
+											<img src={referenceAssetTokenIcons[1]} alt="tokens" />
+										</div>
+									</div>
 								</div>
 								<div className="">
 									<div className="text-3xl">{referenceAsset}</div>
@@ -162,7 +165,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 							</div>
 						</div>
 
-						<div className="relative group overflow-hidden w-fit mt-4">
+						<div className="relative group overflow-hidden w-fit mt-6">
 							<div className="bg-[#FFCB45] py-2 px-3 flex items-center justify-end text-black font-text text-xs animate-shine">
 								<div className="h-1 w-1 bg-[#EE4D37] rounded-full mr-2"></div>
 								<div className="font-bold mr-1 ">Offer available until</div>
@@ -173,7 +176,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 							<div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 animate-shine" />
 						</div>
 
-						<div className="flex mt-4 items-center">
+						<div className="flex mt-6 items-center">
 							<div className="flex items-center mr-4">
 								<div className="mr-2">
 									<img src="./USDT-Coin.svg" alt="coin" />
@@ -183,8 +186,10 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 										Maximum available
 									</div>
 									<div className="font-medium text-2xl">
-										{formatUnits(pool.takerCollateralAmount, decimal)}
-										{/**TODO Use decimals here */}
+										{`${formatUnits(
+											pool.takerCollateralAmount,
+											decimal
+										)} ${collateralTokenSymbol}`}
 									</div>
 								</div>
 							</div>
@@ -201,7 +206,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 							</div>
 						</div>
 
-						<div className="mt-6 flex flex-col gap-3 w-[520px]">
+						<div className="mt-8 flex flex-col gap-3 w-[520px]">
 							<div className="border-[0.4px] border-[#8A8A8A] flex text-xs px-4 py-2 items-center gap-1 font-text">
 								<div className="mr-3">
 									<img src="./up-arrow.svg" alt="up" />
@@ -228,7 +233,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								)}
 							</div>
 							<div className="border-[0.4px] border-[#8A8A8A] flex text-xs px-4 py-2 items-center gap-1 font-text">
-								<div className="mr-3">
+								<div className="mr-2">
 									<img src="./equal-arrow.svg" alt="up" />
 								</div>
 								<div className="text-[#89A5E3]">
@@ -250,7 +255,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 								</div>
 								<div>
 									{' '}
-									if BTC/USDT is at {inflection} on {PoolExpiryTime}
+									if {referenceAsset} is at {inflection} on {PoolExpiryTime}
 								</div>
 							</div>
 
@@ -299,7 +304,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 					</div>
 
 					{/* right side */}
-					<div className="flex flex-col w-full pt-6">
+					<div className="flex flex-col w-full pt-6 mt-4">
 						{/* <div className="text-base opacity-70 text-right">{`#${id}`}</div> */}
 						<PayoffChart
 							pool={pool}
@@ -311,7 +316,12 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 						<div className="mt-8">
 							<div className="font-text flex items-center justify-end gap-3">
 								<div>
-									<img src="./favicon.svg" alt="diva" width={50} height={34} />
+									<img
+										src="./diva_logo.svg"
+										alt="diva"
+										width={50}
+										height={34}
+									/>
 								</div>
 								<div>
 									<div className="text-[#1AD3FF] text-xs">Powered by</div>
@@ -332,6 +342,14 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 					</div>
 				</div>
 			</div>
+			<div className="my-4 font-text font-bold text-xs text-[#8A8A8A]">
+				Offer link:
+				<a
+					className="underline"
+					target={'_blank'}
+					href={`https://app.diva.finance/offer/${pool.offerHash}`}>{` https://app.diva.finance/offer/${pool.offerHash}`}</a>
+			</div>
+
 			<div className="mt-2 flex gap-2">
 				<button
 					onClick={() => {
@@ -352,10 +370,9 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 				</button>
 				<button
 					onClick={() => {
-						//
 						setIsCopyButtonClick(true)
 						navigator.clipboard.writeText(
-							`https://divaviz.com/${pool.offerHash}`
+							`https://divaviz.com/${pool.offerHash}}`
 						)
 						setTimeout(() => {
 							setIsCopyButtonClick(false)
@@ -375,7 +392,7 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 				</button>
 
 				<TwitterShareButton
-					url={`https://divaviz.com/${pool.offerHash}`}
+					url={`https://app.diva.finance/offer/${pool.offerHash}`}
 					title={'Sharing the DIVA ViZ'}>
 					<div className="flex items-center justify-center gap-2 text-[#8A8A8A] border-[1px] border-[#8A8A8A] px-3 py-1 font-text">
 						<div>
