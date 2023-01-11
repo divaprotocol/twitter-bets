@@ -1,6 +1,6 @@
 import { TOKEN_WITH_ICONS } from '../constant'
 
-const getAssetImage = (asset: string, color: 'yellow' | 'green') => {
+export const getAssetImage = (asset: string, color: 'yellow' | 'green') => {
     if (TOKEN_WITH_ICONS[asset]) {
         return `./font-images/${TOKEN_WITH_ICONS[asset.toUpperCase()]}.svg`
     } else {

@@ -6,7 +6,7 @@ import { TwitterShareButton } from 'react-share'
 import { PayoffProfile } from './payOffProfile'
 import ERC20 from '../abi/ERC20ABI.json'
 import Web3 from 'web3'
-import { getUnderlyingTokenImage } from '../utils/token'
+import { getAssetImage, getUnderlyingTokenImage } from '../utils/token'
 
 const PayoffChart = ({
 	pool,
@@ -179,7 +179,10 @@ const PoolOffer = ({ pool }: { pool: any }) => {
 						<div className="flex mt-6 items-center">
 							<div className="flex items-center mr-4">
 								<div className="mr-2">
-									<img src="./USDT-Coin.svg" alt="coin" />
+									<img
+										src={getAssetImage(collateralTokenSymbol, 'green')}
+										alt="coin"
+									/>
 								</div>
 								<div className="font-text">
 									<div className="text-xl text-[#3BFFAD]">

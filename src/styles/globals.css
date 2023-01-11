@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+	background-color: #000;
+}
+
 @font-face {
 	font-family: 'PPCirka';
 	src: url('../assets/PPCirka/PPCirka-Light.otf');
